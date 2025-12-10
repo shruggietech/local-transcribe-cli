@@ -156,7 +156,7 @@ def transcribe_file(
         "-o",
         type=str,
         default="transcripts",
-        help="Directory to write transcript .txt files (default: transcripts).",
+        help="Directory to write transcript files (default: transcripts).",
     )
     p.add_argument(
         "--output-formats",

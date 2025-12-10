@@ -11,10 +11,12 @@
     Directory containing audio files to transcribe. Default: project root.
 
 .PARAMETER OutDir
-    Directory where transcript .txt files will be written. Default: "transcripts" under project root.
+    Directory where transcript files will be written. Default: "transcripts" under project root.
 
 .PARAMETER Pattern
-    Filename glob pattern for input audio files. Default: "*.ogg".
+    Filename glob pattern for input files. Optional.
+    If provided, this is ADDITIVE to the default extensions for the selected MediaType.
+    Example: "*.xyz"
 
 .PARAMETER Model
     Whisper model name (e.g. "large-v3"). Default: "large-v3".
@@ -28,11 +30,29 @@
 .PARAMETER ComputeType
     CTranslate2 compute type (e.g. "auto", "int8", "float16"). Default: "auto".
 
+.PARAMETER OutputFormats
+    List of output formats to generate. Options: "txt", "json", "srt".
+    Default: "txt", "json".
+
+.PARAMETER MediaType
+    Type of media to process. Options: "audio", "video", "all".
+    Default: "audio".
+    - audio: targets common audio extensions (.mp3, .wav, .ogg, etc.)
+    - video: targets common video extensions (.mp4, .mkv, .mov, etc.)
+    - all: targets both audio and video extensions.
+
 .EXAMPLE
-    # Basic usage with Telegram-exported voice messages:
+    # Basic usage with Telegram-exported voice messages (defaults to audio):
     .\scripts\Invoke-LocalTranscribe.ps1 `
         -AudioDir 'C:\Telegram\TylerVoice' `
         -OutDir '.\transcripts'
+
+.EXAMPLE
+    # Transcribe video files to SRT subtitles:
+    .\scripts\Invoke-LocalTranscribe.ps1 `
+        -AudioDir 'C:\Videos' `
+        -MediaType 'video' `
+        -OutputFormats 'srt'
 
 .EXAMPLE
     # Force CPU with int8 quantization:
