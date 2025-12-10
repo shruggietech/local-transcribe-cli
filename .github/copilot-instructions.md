@@ -1,20 +1,24 @@
 # Copilot Instructions for local-transcribe-cli
 
 ## Project Overview
-`local-transcribe-cli` is a Windows-focused Python tool for batch-transcribing audio files (specifically Telegram voice notes) using `faster-whisper`. It prioritizes local execution with GPU support via CTranslate2.
+`local-transcribe-cli` is a Windows-focused Python tool for batch-transcribing audio and video files using `faster-whisper`. It prioritizes local execution with GPU support via CTranslate2.
 
 ## Architecture & Data Flow
-- **Core Logic**: `src/local_transcribe_cli/cli.py` contains the entry point, argument parsing, and transcription loop.
-- **Wrapper**: `scripts/LocalTranscribe.ps1` is the primary user interface. It handles:
-  - Virtual environment creation (`.venv`).
-  - Dependency installation (`requirements.txt`).
-  - Invoking the Python module with passed arguments.
-- **Data Flow**: Input Directory -> Glob Pattern (default `*.ogg`) -> Whisper Model -> Text Output (one `.txt` per input file).
+- **Core Logic**: `src/local_transcribe_cli/cli.py` contains the entry point, argument parsing, and transcription loop. It supports live progress bars and automatic GPU library loading.
+- **Scripts**:
+  - `scripts/InstallLocalTranscribe.ps1`: Handles environment setup, dependency installation, and updates.
+  - `scripts/LocalTranscribe.ps1`: Primary user interface. Wraps the Python CLI and ensures the environment is ready.
+  - `scripts/TestLocalTranscribe.ps1`: Runs the test suite.
+- **Data Flow**: Input Directory -> Media Type Filter (Audio/Video) -> Whisper Model -> Multi-format Output (`.txt`, `.json`, `.srt`).
 
 ## Development Workflows
-- **Bootstrapping**: Always use `scripts/LocalTranscribe.ps1` to initialize the environment.
+- **Installation/Update**:
   ```powershell
-  .\scripts\LocalTranscribe.ps1 -AudioDir 'path/to/audio'
+  .\scripts\InstallLocalTranscribe.ps1
+  ```
+- **Running Tests**:
+  ```powershell
+  .\scripts\TestLocalTranscribe.ps1
   ```
 - **Direct Execution**:
   ```powershell
@@ -22,15 +26,16 @@
   .\.venv\Scripts\Activate.ps1
   python -m local_transcribe_cli.cli --help
   ```
-- **Dependencies**: Managed in `pyproject.toml` and `requirements.txt`. Keep them in sync.
+- **Dependencies**: Managed in `requirements.txt`. `pyproject.toml` defines the package structure.
 
 ## Code Conventions
-- **Path Handling**: Use `pathlib.Path` exclusively over `os.path`.
-- **Type Hinting**: Fully type-hint all functions (e.g., `def func(x: int) -> str:`).
+- **Path Handling**: Use `pathlib.Path` exclusively over `os.path` (except for `os.add_dll_directory` on Windows).
+- **Type Hinting**: Fully type-hint all functions.
 - **Imports**: Group imports: standard library, third-party, local.
-- **Output**: Print user-friendly status messages prefixed with `[local-transcribe]`.
+- **Output**: Print user-friendly status messages prefixed with `[local-transcribe]`. Use `tqdm` for progress bars.
 
 ## Key Files
 - `src/local_transcribe_cli/cli.py`: Main application logic.
-- `scripts/LocalTranscribe.ps1`: PowerShell wrapper for easy usage.
-- `pyproject.toml`: Project metadata and entry point definition.
+- `scripts/LocalTranscribe.ps1`: Main execution wrapper.
+- `scripts/InstallLocalTranscribe.ps1`: Installation and update logic.
+- `tests/`: Pytest test suite.
