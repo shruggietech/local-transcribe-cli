@@ -5,16 +5,16 @@
 
 ## Architecture & Data Flow
 - **Core Logic**: `src/local_transcribe_cli/cli.py` contains the entry point, argument parsing, and transcription loop.
-- **Wrapper**: `scripts/Invoke-LocalTranscribe.ps1` is the primary user interface. It handles:
+- **Wrapper**: `scripts/LocalTranscribe.ps1` is the primary user interface. It handles:
   - Virtual environment creation (`.venv`).
   - Dependency installation (`requirements.txt`).
   - Invoking the Python module with passed arguments.
 - **Data Flow**: Input Directory -> Glob Pattern (default `*.ogg`) -> Whisper Model -> Text Output (one `.txt` per input file).
 
 ## Development Workflows
-- **Bootstrapping**: Always use `scripts/Invoke-LocalTranscribe.ps1` to initialize the environment.
+- **Bootstrapping**: Always use `scripts/LocalTranscribe.ps1` to initialize the environment.
   ```powershell
-  .\scripts\Invoke-LocalTranscribe.ps1 -AudioDir 'path/to/audio'
+  .\scripts\LocalTranscribe.ps1 -AudioDir 'path/to/audio'
   ```
 - **Direct Execution**:
   ```powershell
@@ -32,5 +32,5 @@
 
 ## Key Files
 - `src/local_transcribe_cli/cli.py`: Main application logic.
-- `scripts/Invoke-LocalTranscribe.ps1`: PowerShell wrapper for easy usage.
+- `scripts/LocalTranscribe.ps1`: PowerShell wrapper for easy usage.
 - `pyproject.toml`: Project metadata and entry point definition.

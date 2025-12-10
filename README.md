@@ -29,10 +29,17 @@ cd local-transcribe-cli
   ```powershell
   Use-Python -Spec 'py:3.12'
   ```
-- First run bootstraps .venv and installs dependencies:
+
+- **Installation / Update**:
+  Run the install script to set up the environment and pull the latest changes:
+  ```powershell
+  .\scripts\InstallLocalTranscribe.ps1
+  ```
+
+- **Running Transcriptions**:
   ```powershell
   # Default: Transcribes audio files to txt and json
-  .\scripts\Invoke-LocalTranscribe.ps1 -AudioDir 'C:\Telegram\VoiceMessages' -OutDir '.\transcripts'
+  .\scripts\LocalTranscribe.ps1 -AudioDir 'C:\Telegram\VoiceMessages' -OutDir '.\transcripts'
   ```
 - Transcripts will be written into the `transcripts` folder.
 
@@ -41,7 +48,7 @@ cd local-transcribe-cli
 ### Transcribe Video Files to Subtitles (SRT)
 
 ```powershell
-.\scripts\Invoke-LocalTranscribe.ps1 `
+.\scripts\LocalTranscribe.ps1 `
     -AudioDir 'C:\Videos' `
     -MediaType 'video' `
     -OutputFormats 'srt'
@@ -50,7 +57,7 @@ cd local-transcribe-cli
 ### Transcribe Everything (Audio & Video) to All Formats
 
 ```powershell
-.\scripts\Invoke-LocalTranscribe.ps1 `
+.\scripts\LocalTranscribe.ps1 `
     -AudioDir 'C:\Media' `
     -MediaType 'all' `
     -OutputFormats 'txt', 'json', 'srt'
