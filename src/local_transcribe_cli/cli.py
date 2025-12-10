@@ -23,6 +23,7 @@ if sys.platform == "win32":
                 bin_path = os.path.join(path, "bin")
                 if os.path.isdir(bin_path):
                     os.add_dll_directory(bin_path)
+                    os.environ["PATH"] = bin_path + os.pathsep + os.environ["PATH"]
 
         _add_nvidia_path(nvidia.cublas)
         _add_nvidia_path(nvidia.cudnn)
