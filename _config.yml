@@ -1,0 +1,4 @@
+title: local-transcribe-cli
+description: A Windows-focused Python tool for batch-transcribing audio files using faster-whisper.
+show_downloads: true
+theme: jekyll-theme-hacker
