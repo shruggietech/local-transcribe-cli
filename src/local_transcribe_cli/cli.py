@@ -117,6 +117,18 @@ def transcribe_file(
     print(
         f"[local-transcribe]   Finished {audio_path.name} "
         f"(duration={info.duration:.1f}s, language={info.language})"
+    )
+
+
+def build_arg_parser() -> argparse.ArgumentParser:
+    p = argparse.ArgumentParser(
+        prog="local-transcribe",
+        description=(
+            "Batch-transcribe audio/video files in a directory using faster-whisper "
+            "(Whisper large-v3 by default). Supports TXT, JSON, and SRT outputs."
+        ),
+    )
+
     p.add_argument(
         "--input-dir",
         "-i",
@@ -137,19 +149,6 @@ def transcribe_file(
         choices=["audio", "video", "all"],
         default="audio",
         help="Media type to target (default: audio).",
-    )
-    p.add_argument(
-        "--output-dir",
-        type=str,
-        default=".",
-        help="Directory containing audio files (default: current directory).",
-    )
-    p.add_argument(
-        "--pattern",
-        "-p",
-        type=str,
-        default=DEFAULT_PATTERN,
-        help=f"Filename glob pattern (default: {DEFAULT_PATTERN!r}).",
     )
     p.add_argument(
         "--output-dir",
