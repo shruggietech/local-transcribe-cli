@@ -1,0 +1,101 @@
+<#
+.SYNOPSIS
+    Convenience wrapper for the local-transcribe CLI.
+
+.DESCRIPTION
+    Ensures a local virtual environment exists, installs dependencies
+    from requirements.txt if needed, and then calls the Python entry
+    point "local-transcribe" with the provided options.
+
+.PARAMETER AudioDir
+    Directory containing audio files to transcribe. Default: project root.
+
+.PARAMETER OutDir
+    Directory where transcript .txt files will be written. Default: "transcripts" under project root.
+
+.PARAMETER Pattern
+    Filename glob pattern for input audio files. Default: "*.ogg".
+
+.PARAMETER Model
+    Whisper model name (e.g. "large-v3"). Default: "large-v3".
+
+.PARAMETER Language
+    Language hint (e.g. "en"). Default: "en".
+
+.PARAMETER Device
+    Compute device: "auto", "cpu", or "cuda". Default: "auto".
+
+.PARAMETER ComputeType
+    CTranslate2 compute type (e.g. "auto", "int8", "float16"). Default: "auto".
+
+.EXAMPLE
+    # Basic usage with Telegram-exported voice messages:
+    .\scripts\Invoke-LocalTranscribe.ps1 `
+        -AudioDir 'C:\Telegram\TylerVoice' `
+        -OutDir '.\transcripts'
+
+.EXAMPLE
+    # Force CPU with int8 quantization:
+    .\scripts\Invoke-LocalTranscribe.ps1 `
+        -AudioDir 'C:\Telegram\TylerVoice' `
+        -Device 'cpu' `
+        -ComputeType 'int8'
+#>
+
+param(
+    [string]$AudioDir    = ".",
+    [string]$OutDir      = "transcripts",
+    [string]$Pattern     = "*.ogg",
+    [string]$Model       = "large-v3",
+    [string]$Language    = "en",
+    [ValidateSet("auto","cpu","cuda")]
+    [string]$Device      = "auto",
+    [string]$ComputeType = "auto"
+)
+
+$ErrorActionPreference = "Stop"
+
+# Resolve project root (repo root == parent of scripts/)
+$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$projectRoot = Split-Path -Parent $scriptDir
+Set-Location $projectRoot
+
+$venvPath   = Join-Path $projectRoot ".venv"
+$venvPython = Join-Path $venvPath "Scripts\python.exe"
+$reqFile    = Join-Path $projectRoot "requirements.txt"
+
+Write-Host "[local-transcribe] Project root: $projectRoot"
+
+if (-not (Get-Command python -ErrorAction SilentlyContinue)) {
+    throw "No 'python' on PATH. Install Python 3.9+ or configure pyshim first."
+}
+
+# Create venv if missing
+if (-not (Test-Path $venvPython)) {
+    Write-Host "[local-transcribe] Creating virtual environment at $venvPath..."
+    python -m venv ".venv"
+
+    if (-not (Test-Path $venvPython)) {
+        throw "Failed to create virtual environment; expected '$venvPython'."
+    }
+
+    Write-Host "[local-transcribe] Installing dependencies from requirements.txt..."
+    & $venvPython -m pip install --upgrade pip
+    & $venvPython -m pip install -r $reqFile
+}
+
+# Build argument list for the Python CLI
+$argv = @(
+    "-m", "local_transcribe_cli.cli",
+    "--input-dir", $AudioDir,
+    "--pattern", $Pattern,
+    "--output-dir", $OutDir,
+    "--model", $Model,
+    "--language", $Language,
+    "--device", $Device,
+    "--compute-type", $ComputeType
+)
+
+Write-Host "[local-transcribe] Using venv interpreter: $venvPython"
+Write-Host "[local-transcribe] Invoking CLI..."
+& $venvPython @argv

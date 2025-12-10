@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "local-transcribe-cli"
+version = "0.1.0"
+description = "Simple local CLI for batch-transcribing audio files with faster-whisper."
+authors = [
+  { name = "ShruggieTech LLC" }
+]
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+  "faster-whisper>=1.2.0",
+]
+
+[project.scripts]
+local-transcribe = "local_transcribe_cli.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
