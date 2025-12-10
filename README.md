@@ -1,7 +1,6 @@
 # local-transcribe-cli
 
-Local, on-device transcription CLI built on [faster-whisper](https://github.com/SYSTRAN/faster-whisper).  
-Designed for Telegram voice notes and other short recordings.
+A Windows-focused Python tool for batch-transcribing audio and video files using [faster-whisper](https://github.com/SYSTRAN/faster-whisper). This tool prioritizes local execution with GPU support via [CTranslate2](https://github.com/OpenNMT/CTranslate2).
 
 ## Features
 
