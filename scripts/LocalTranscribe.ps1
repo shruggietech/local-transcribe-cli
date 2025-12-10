@@ -115,6 +115,14 @@ if (-not (Test-Path $venvPython)) {
     Write-Host "[local-transcribe] Installing dependencies from requirements.txt..."
     & $venvPython -m pip install --upgrade pip
     & $venvPython -m pip install -r $reqFile
+    & $venvPython -m pip install -e .
+}
+
+# Ensure the package is installed (self-healing for existing venvs)
+$pkgCheck = & $venvPython -c "import importlib.util; print(importlib.util.find_spec('local_transcribe_cli') is not None)" 2>$null
+if ($pkgCheck.Trim() -eq "False") {
+    Write-Host "[local-transcribe] Package not installed in venv. Installing..."
+    & $venvPython -m pip install -e .
 }
 
 # Build argument list for the Python CLI

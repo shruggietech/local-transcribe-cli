@@ -76,5 +76,6 @@ if (Test-Path ".git") {
 Write-Host "[local-transcribe] Updating dependencies from requirements.txt..."
 & $venvPython -m pip install --upgrade pip
 & $venvPython -m pip install -r $reqFile
+& $venvPython -m pip install -e .
 
 Write-Host "[local-transcribe] Update complete."
