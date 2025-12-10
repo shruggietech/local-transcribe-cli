@@ -41,6 +41,9 @@
     - video: targets common video extensions (.mp4, .mkv, .mov, etc.)
     - all: targets both audio and video extensions.
 
+.PARAMETER Help
+    Print the script help text to the terminal and exit.
+
 .EXAMPLE
     # Basic usage with Telegram-exported voice messages (defaults to audio):
     .\scripts\Invoke-LocalTranscribe.ps1 `
@@ -73,10 +76,17 @@ param(
     [string]$ComputeType = "auto",
     [string[]]$OutputFormats = @("txt", "json"),
     [ValidateSet("audio","video","all")]
-    [string]$MediaType   = "audio"
+    [string]$MediaType   = "audio",
+    [switch]$Help
 )
 
 $ErrorActionPreference = "Stop"
+
+# Catch help text requests
+if ($Help) {
+    Get-Help $MyInvocation.MyCommand.Path -Detailed
+    exit
+}
 
 # Resolve project root (repo root == parent of scripts/)
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
