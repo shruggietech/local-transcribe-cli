@@ -45,12 +45,15 @@
 param(
     [string]$AudioDir    = ".",
     [string]$OutDir      = "transcripts",
-    [string]$Pattern     = "*.ogg",
+    [string]$Pattern     = $null,
     [string]$Model       = "large-v3",
     [string]$Language    = "en",
     [ValidateSet("auto","cpu","cuda")]
     [string]$Device      = "auto",
-    [string]$ComputeType = "auto"
+    [string]$ComputeType = "auto",
+    [string[]]$OutputFormats = @("txt", "json"),
+    [ValidateSet("audio","video","all")]
+    [string]$MediaType   = "audio"
 )
 
 $ErrorActionPreference = "Stop"
@@ -88,13 +91,19 @@ if (-not (Test-Path $venvPython)) {
 $argv = @(
     "-m", "local_transcribe_cli.cli",
     "--input-dir", $AudioDir,
-    "--pattern", $Pattern,
     "--output-dir", $OutDir,
     "--model", $Model,
     "--language", $Language,
     "--device", $Device,
-    "--compute-type", $ComputeType
+    "--compute-type", $ComputeType,
+    "--output-formats", $OutputFormats,
+    "--media-type", $MediaType
 )
+
+if (-not [string]::IsNullOrWhiteSpace($Pattern)) {
+    $argv += "--pattern"
+    $argv += $Pattern
+}
 
 Write-Host "[local-transcribe] Using venv interpreter: $venvPython"
 Write-Host "[local-transcribe] Invoking CLI..."
