@@ -8,6 +8,7 @@ A Windows-focused Python tool for batch-transcribing audio and video files using
 - Supports multiple output formats: `txt`, `json`, and `srt` (subtitles).
 - Targets common audio and video extensions automatically.
 - Uses Whisper `large-v3` by default for high accuracy.
+- Live progress bar with time estimation.
 - GPU support via CTranslate2 (CUDA 12 + cuDNN 9 recommended). 
 - Works fine with or without [pyshim](https://github.com/shruggietech/pyshim).
 
@@ -15,7 +16,7 @@ A Windows-focused Python tool for batch-transcribing audio and video files using
 
 - Windows 11
 - Python 3.9+ on PATH (if you use pyshim, just ensure `python` resolves correctly).
-- Optional: NVIDIA GPU with CUDA 12 + cuDNN 9 for faster inference.
+- Optional: NVIDIA GPU. The tool attempts to install necessary CUDA/cuDNN libraries automatically.
 
 ## Quick start
 

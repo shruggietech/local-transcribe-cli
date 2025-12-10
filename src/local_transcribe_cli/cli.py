@@ -1,10 +1,22 @@
 import argparse
 import json
+import os
 import pathlib
 import sys
 from typing import Iterable
 
+if sys.platform == "win32":
+    try:
+        import nvidia.cublas
+        import nvidia.cudnn
+        
+        os.add_dll_directory(os.path.join(os.path.dirname(nvidia.cublas.__file__), "bin"))
+        os.add_dll_directory(os.path.join(os.path.dirname(nvidia.cudnn.__file__), "bin"))
+    except (ImportError, AttributeError, OSError):
+        pass
+
 from faster_whisper import WhisperModel
+from tqdm import tqdm
 
 
 DEFAULT_MODEL = "large-v3"
@@ -83,17 +95,27 @@ def transcribe_file(
     language: str,
     output_formats: list[str],
 ) -> None:
-    print(f"[local-transcribe] Processing: {audio_path.name}")
-
     # Run transcription
     segments_gen, info = model.transcribe(
         str(audio_path),
         language=language,
         beam_size=5,
     )
+
+    print(
+        f"[local-transcribe] Processing: {audio_path.name} "
+        f"(Duration: {info.duration:.1f}s, Language: {info.language})"
+    )
     
     # Materialize segments so we can write multiple formats
-    segments = list(segments_gen)
+    segments = []
+    with tqdm(total=round(info.duration, 2), unit="s", bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt}s") as pbar:
+        for segment in segments_gen:
+            segments.append(segment)
+            pbar.update(segment.end - pbar.n)
+        
+        if pbar.n < pbar.total:
+            pbar.update(pbar.total - pbar.n)
 
     output_dir.mkdir(parents=True, exist_ok=True)
     
@@ -113,11 +135,6 @@ def transcribe_file(
         out_path = output_dir / (base_name + ".srt")
         write_srt(segments, out_path)
         print(f"[local-transcribe]   -> {out_path.name}")
-
-    print(
-        f"[local-transcribe]   Finished {audio_path.name} "
-        f"(duration={info.duration:.1f}s, language={info.language})"
-    )
 
 
 def build_arg_parser() -> argparse.ArgumentParser:
