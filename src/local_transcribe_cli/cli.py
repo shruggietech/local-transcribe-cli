@@ -9,14 +9,23 @@ if sys.platform == "win32":
     try:
         import nvidia.cublas
         import nvidia.cudnn
-        
-        cublas_path = getattr(nvidia.cublas, "__file__", None)
-        if cublas_path:
-            os.add_dll_directory(os.path.join(os.path.dirname(cublas_path), "bin"))
 
-        cudnn_path = getattr(nvidia.cudnn, "__file__", None)
-        if cudnn_path:
-            os.add_dll_directory(os.path.join(os.path.dirname(cudnn_path), "bin"))
+        def _add_nvidia_path(module):
+            path = getattr(module, "__file__", None)
+            if path:
+                path = os.path.dirname(path)
+            else:
+                paths = getattr(module, "__path__", None)
+                if paths and len(paths) > 0:
+                    path = paths[0]
+            
+            if path:
+                bin_path = os.path.join(path, "bin")
+                if os.path.isdir(bin_path):
+                    os.add_dll_directory(bin_path)
+
+        _add_nvidia_path(nvidia.cublas)
+        _add_nvidia_path(nvidia.cudnn)
     except (ImportError, AttributeError, OSError, TypeError):
         pass
 
