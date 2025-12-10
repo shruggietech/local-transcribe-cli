@@ -23,15 +23,15 @@ git clone https://github.com/shruggietech/local-transcribe-cli.git
 cd local-transcribe-cli
 ```
 
-# Optional but recommended if you use pyshim:
-Use-Python -Spec 'py:3.12'
-
-# First run bootstraps .venv and installs dependencies:
-.\scripts\Invoke-LocalTranscribe.ps1 `
-    -AudioDir 'C:\Telegram\TylerVoice' `
-    -OutDir '.\transcripts'
-
-Transcripts will be written as `.txt` files into the `transcripts` folder.
+- Optional but recommended if you use pyshim:
+  ```powershell
+  Use-Python -Spec 'py:3.12'
+  ```
+- First run bootstraps .venv and installs dependencies:
+  ```powershell
+  .\scripts\Invoke-LocalTranscribe.ps1 -AudioDir 'C:\Telegram\VoiceMessages' -OutDir '.\transcripts'
+  ```
+- Transcripts will be written as `.txt` files into the `transcripts` folder.
 
 ## Python CLI usage
 
