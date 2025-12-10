@@ -10,9 +10,14 @@ if sys.platform == "win32":
         import nvidia.cublas
         import nvidia.cudnn
         
-        os.add_dll_directory(os.path.join(os.path.dirname(nvidia.cublas.__file__), "bin"))
-        os.add_dll_directory(os.path.join(os.path.dirname(nvidia.cudnn.__file__), "bin"))
-    except (ImportError, AttributeError, OSError):
+        cublas_path = getattr(nvidia.cublas, "__file__", None)
+        if cublas_path:
+            os.add_dll_directory(os.path.join(os.path.dirname(cublas_path), "bin"))
+
+        cudnn_path = getattr(nvidia.cudnn, "__file__", None)
+        if cudnn_path:
+            os.add_dll_directory(os.path.join(os.path.dirname(cudnn_path), "bin"))
+    except (ImportError, AttributeError, OSError, TypeError):
         pass
 
 from faster_whisper import WhisperModel
@@ -45,12 +50,16 @@ def iter_audio_files(root: pathlib.Path, patterns: list[str]) -> Iterable[pathli
 
 def format_timestamp(seconds: float) -> str:
     """Convert seconds to SRT timestamp format (HH:MM:SS,mmm)."""
-    whole_seconds = int(seconds)
-    milliseconds = int((seconds - whole_seconds) * 1000)
+    total_milliseconds = int(round(seconds * 1000))
     
-    hours = whole_seconds // 3600
-    minutes = (whole_seconds % 3600) // 60
-    secs = whole_seconds % 60
+    hours = total_milliseconds // 3600000
+    total_milliseconds %= 3600000
+    
+    minutes = total_milliseconds // 60000
+    total_milliseconds %= 60000
+    
+    secs = total_milliseconds // 1000
+    milliseconds = total_milliseconds % 1000
     
     return f"{hours:02d}:{minutes:02d}:{secs:02d},{milliseconds:03d}"
 

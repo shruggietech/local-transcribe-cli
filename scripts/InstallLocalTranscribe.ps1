@@ -81,8 +81,13 @@ if (-not (Test-Path $venvPython)) {
 # 4. Install Dependencies
 Write-Host "[local-transcribe] Installing/Updating dependencies from requirements.txt..."
 & $venvPython -m pip install --upgrade pip
+if ($LASTEXITCODE -ne 0) { throw "Pip upgrade failed." }
+
 & $venvPython -m pip install -r $reqFile
+if ($LASTEXITCODE -ne 0) { throw "Dependency installation failed." }
+
 & $venvPython -m pip install -e .
+if ($LASTEXITCODE -ne 0) { throw "Package installation failed." }
 
 Write-Host "[local-transcribe] Installation/Update complete."
 Write-Host "[local-transcribe] You can now run: .\scripts\LocalTranscribe.ps1"

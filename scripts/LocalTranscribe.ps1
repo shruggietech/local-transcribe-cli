@@ -114,8 +114,11 @@ if (-not (Test-Path $venvPython)) {
 
     Write-Host "[local-transcribe] Installing dependencies from requirements.txt..."
     & $venvPython -m pip install --upgrade pip
+    if ($LASTEXITCODE -ne 0) { throw "Pip upgrade failed." }
     & $venvPython -m pip install -r $reqFile
+    if ($LASTEXITCODE -ne 0) { throw "Dependency installation failed." }
     & $venvPython -m pip install -e .
+    if ($LASTEXITCODE -ne 0) { throw "Package installation failed." }
 }
 
 # Ensure the package is installed (self-healing for existing venvs)
