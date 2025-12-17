@@ -82,6 +82,22 @@ Process both audio and video files, generating all output formats:
 | `-Language` | Spoken language code (e.g., `en`, `fr`). | `en` |
 | `-Pattern` | Custom glob pattern (e.g., `*.m4a`). Additive to MediaType. | `$null` |
 
+### Default Supported Audio Extensions
+
+The following audio file extensions are supported by default and are automatically detected when `-MediaType` is set to `audio` or `all`:
+
+```text
+aac, ac3, aiff, alac, amr, au, flac, m4a, mid, midi, mp3, ogg, opus, ra, ram, rm, rpm, snd, wav, wma
+```
+
+### Default Supported Video Extensions
+
+The following video file extensions are supported by default and are automatically detected when `-MediaType` is set to `video` or `all`:
+
+```text
+3g2, 3gp, avi, flv, m2ts, m4v, mkv, mov, mp4, mpeg, mpg, mts, ogv, vob, webm, wmv
+```
+
 ## Testing
 
 To ensure the tool is working correctly on your system, you can run the included test suite. This will verify dependency installation and run a small integration test.
